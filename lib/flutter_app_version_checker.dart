@@ -30,7 +30,7 @@ class AppVersionChecker {
     this.currentVersion,
     this.appId,
     this.androidStore = AndroidStore.googlePlayStore,
-    this.countryCode = 'us',
+    this.countryCode = 'sa',
   });
 
   Future<AppCheckerResult> checkUpdate() async {
