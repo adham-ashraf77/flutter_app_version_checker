@@ -70,7 +70,6 @@ class AppVersionChecker {
         if (results.isEmpty) {
           errorMsg = "Can't find an app in the Apple Store with the id: $packageName";
         } else {
-          log(jsonDecode(response.data));
           newVersion = jsonObj['results'][0]['version'];
           url = jsonObj['results'][0]['trackViewUrl'];
         }
