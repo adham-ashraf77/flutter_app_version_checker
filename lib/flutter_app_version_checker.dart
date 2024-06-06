@@ -54,21 +54,25 @@ class AppVersionChecker {
     }
   }
 
-  Future<AppCheckerResult> _checkAppleStore(String currentVersion, String packageName) async {
+  Future<AppCheckerResult> _checkAppleStore(
+      String currentVersion, String packageName) async {
     String? errorMsg;
     String? newVersion;
     String? url;
     final dio = Dio();
-    var uri = Uri.https("itunes.apple.com", "/lookup", {"bundleId": packageName, "country": countryCode});
+    var uri = Uri.https("itunes.apple.com", "/lookup",
+        {"bundleId": "com.quickyclean.quickycleanapp", "country": "sa"});
     try {
-      final response = await dio.getUri(uri);
+      var response = await dio.getUri(uri);
       if (response.statusCode != 200) {
-        errorMsg = "Can't find an app in the Apple Store with the id: $packageName";
+        errorMsg =
+            "Can't find an app in the Apple Store with the id: $packageName";
       } else {
-        final jsonObj = jsonDecode(response.data);
+        var jsonObj = jsonDecode(response.data);
         final List results = jsonObj['results'];
         if (results.isEmpty) {
-          errorMsg = "Can't find an app in the Apple Store with the id: $packageName";
+          errorMsg =
+              "Can't find an app in the Apple Store with the id: $packageName";
         } else {
           newVersion = jsonObj['results'][0]['version'];
           url = jsonObj['results'][0]['trackViewUrl'];
@@ -85,17 +89,22 @@ class AppVersionChecker {
     );
   }
 
-  Future<AppCheckerResult> _checkPlayStore(String currentVersion, String packageName) async {
+  Future<AppCheckerResult> _checkPlayStore(
+      String currentVersion, String packageName) async {
     String? errorMsg;
     String? newVersion;
     String? url;
-    final uri = Uri.https("play.google.com", "/store/apps/details", {"id": packageName});
+    final uri = Uri.https(
+        "play.google.com", "/store/apps/details", {"id": packageName});
     try {
       final response = await http.get(uri);
       if (response.statusCode != 200) {
-        errorMsg = "Can't find an app in the Google Play Store with the id: $packageName";
+        errorMsg =
+            "Can't find an app in the Google Play Store with the id: $packageName";
       } else {
-        newVersion = RegExp(r',\[\[\["([0-9,.]*)"]],').firstMatch(response.body)!.group(1);
+        newVersion = RegExp(r',\[\[\["([0-9,.]*)"]],')
+            .firstMatch(response.body)!
+            .group(1);
         url = uri.toString();
       }
     } catch (e) {
@@ -110,7 +119,8 @@ class AppVersionChecker {
   }
 }
 
-Future<AppCheckerResult> _checkApkPureStore(String currentVersion, String packageName) async {
+Future<AppCheckerResult> _checkApkPureStore(
+    String currentVersion, String packageName) async {
   String? errorMsg;
   String? newVersion;
   String? url;
@@ -118,9 +128,11 @@ Future<AppCheckerResult> _checkApkPureStore(String currentVersion, String packag
   try {
     final response = await http.get(uri);
     if (response.statusCode != 200) {
-      errorMsg = "Can't find an app in the ApkPure Store with the id: $packageName";
+      errorMsg =
+          "Can't find an app in the ApkPure Store with the id: $packageName";
     } else {
-      newVersion = RegExp(r'<div class="details-sdk"><span itemprop="version">(.*?)</span>for Android</div>')
+      newVersion = RegExp(
+              r'<div class="details-sdk"><span itemprop="version">(.*?)</span>for Android</div>')
           .firstMatch(response.body)!
           .group(1)!
           .trim();
@@ -158,20 +170,25 @@ class AppCheckerResult {
   );
 
   /// return `true` if update is available
-  bool get canUpdate => _shouldUpdate(currentVersion, (newVersion ?? currentVersion));
+  bool get canUpdate =>
+      _shouldUpdate(currentVersion, (newVersion ?? currentVersion));
 
   bool _shouldUpdate(String versionA, String versionB) {
-    final versionNumbersA = versionA.split(".").map((e) => int.tryParse(e) ?? 0).toList();
-    final versionNumbersB = versionB.split(".").map((e) => int.tryParse(e) ?? 0).toList();
+    final versionNumbersA =
+        versionA.split(".").map((e) => int.tryParse(e) ?? 0).toList();
+    final versionNumbersB =
+        versionB.split(".").map((e) => int.tryParse(e) ?? 0).toList();
 
     final int versionASize = versionNumbersA.length;
     final int versionBSize = versionNumbersB.length;
     int maxSize = math.max(versionASize, versionBSize);
 
     for (int i = 0; i < maxSize; i++) {
-      if ((i < versionASize ? versionNumbersA[i] : 0) > (i < versionBSize ? versionNumbersB[i] : 0)) {
+      if ((i < versionASize ? versionNumbersA[i] : 0) >
+          (i < versionBSize ? versionNumbersB[i] : 0)) {
         return false;
-      } else if ((i < versionASize ? versionNumbersA[i] : 0) < (i < versionBSize ? versionNumbersB[i] : 0)) {
+      } else if ((i < versionASize ? versionNumbersA[i] : 0) <
+          (i < versionBSize ? versionNumbersB[i] : 0)) {
         return true;
       }
     }
