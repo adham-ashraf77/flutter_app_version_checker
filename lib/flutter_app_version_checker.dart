@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -57,18 +58,19 @@ class AppVersionChecker {
     String? errorMsg;
     String? newVersion;
     String? url;
+    final dio = Dio();
     var uri = Uri.https("itunes.apple.com", "/lookup", {"bundleId": packageName, "country": countryCode});
     try {
-      final response = await http.get(uri);
+      final response = await dio.getUri(uri);
       if (response.statusCode != 200) {
         errorMsg = "Can't find an app in the Apple Store with the id: $packageName";
       } else {
-        final jsonObj = jsonDecode(response.body);
+        final jsonObj = jsonDecode(response.data);
         final List results = jsonObj['results'];
         if (results.isEmpty) {
           errorMsg = "Can't find an app in the Apple Store with the id: $packageName";
         } else {
-          log(jsonDecode(response.body));
+          log(jsonDecode(response.data));
           newVersion = jsonObj['results'][0]['version'];
           url = jsonObj['results'][0]['trackViewUrl'];
         }
