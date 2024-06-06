@@ -1,11 +1,9 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -59,16 +57,18 @@ class AppVersionChecker {
     String? errorMsg;
     String? newVersion;
     String? url;
-    final dio = Dio();
-    var uri = Uri.https("itunes.apple.com", "/lookup",
-        {"bundleId": packageName, "country": "sa"});
+    var uri = Uri.https("itunes.apple.com", "/lookup", {
+      "bundleId": packageName,
+      "country": countryCode,
+      "t": DateTime.now().toString()
+    });
     try {
-      var response = await dio.getUri(uri);
+      final response = await http.get(uri);
       if (response.statusCode != 200) {
         errorMsg =
             "Can't find an app in the Apple Store with the id: $packageName";
       } else {
-        var jsonObj = jsonDecode(response.data);
+        final jsonObj = jsonDecode(response.body);
         final List results = jsonObj['results'];
         if (results.isEmpty) {
           errorMsg =
