@@ -1,6 +1,7 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:math' as math;
 
@@ -67,6 +68,7 @@ class AppVersionChecker {
         if (results.isEmpty) {
           errorMsg = "Can't find an app in the Apple Store with the id: $packageName";
         } else {
+          log(jsonDecode(response.body));
           newVersion = jsonObj['results'][0]['version'];
           url = jsonObj['results'][0]['trackViewUrl'];
         }
@@ -160,9 +162,6 @@ class AppCheckerResult {
   bool _shouldUpdate(String versionA, String versionB) {
     final versionNumbersA = versionA.split(".").map((e) => int.tryParse(e) ?? 0).toList();
     final versionNumbersB = versionB.split(".").map((e) => int.tryParse(e) ?? 0).toList();
-
-    print(versionA);
-    print(versionB);
 
     final int versionASize = versionNumbersA.length;
     final int versionBSize = versionNumbersB.length;
