@@ -61,7 +61,7 @@ class AppVersionChecker {
     String? url;
     final dio = Dio();
     var uri = Uri.https("itunes.apple.com", "/lookup",
-        {"bundleId": "com.quickyclean.quickycleanapp", "country": "sa"});
+        {"bundleId": packageName, "country": "sa"});
     try {
       var response = await dio.getUri(uri);
       if (response.statusCode != 200) {
