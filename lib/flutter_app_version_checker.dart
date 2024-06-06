@@ -161,6 +161,9 @@ class AppCheckerResult {
     final versionNumbersA = versionA.split(".").map((e) => int.tryParse(e) ?? 0).toList();
     final versionNumbersB = versionB.split(".").map((e) => int.tryParse(e) ?? 0).toList();
 
+    print(versionA);
+    print(versionB);
+
     final int versionASize = versionNumbersA.length;
     final int versionBSize = versionNumbersB.length;
     int maxSize = math.max(versionASize, versionBSize);
